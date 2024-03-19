@@ -1,3 +1,4 @@
+# !/usr/bin/env bash
 # syntax=docker/dockerfile:1
 FROM node:16-alpine
 # FROM --platform=linux/amd64 yourbaseimage

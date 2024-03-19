@@ -14,7 +14,7 @@ localStorage = new LocalStorage('./scratch');
 
 // Vinculació de comunitat amb servidor extern
 exports.init = (req, res) => {
-  var { idComunitat, nomComunitat, comentaris } = req.body;
+  var { idComunitat, nomComunitat, potenciaComunitat, comentaris } = req.body;
   token = req.headers.authorization;
   data = exportedC.calcularData();
   message = "";
@@ -27,9 +27,9 @@ exports.init = (req, res) => {
   conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
     if (!err) {
       if (rows.length == 0 || rows[0].mode == 0) {
-        if (nomComunitat && idComunitat) {
+        if (nomComunitat && idComunitat && potenciaComunitat) {
           nomComunitat = nomComunitat.toUpperCase();
-          conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, comentaris, sync,mode) VALUES (?,?,?,?,?)', [idComunitat, nomComunitat, comentaris, 1, 0], (err, rows) => {
+          conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, potenciaComunitat, comentaris, sync,mode) VALUES (?,?,?,?,?)', [idComunitat, nomComunitat, potenciaComunitat, comentaris, 1, 0], (err, rows) => {
             if (!err) {
               message = 'Comunitat vinculada';
               httpResponse(req, res, 200, 'OK', message, insertApiTable);
@@ -39,7 +39,7 @@ exports.init = (req, res) => {
             }
           });
         } else {
-          message = 'Comunitat no vinculada. Falta idComunitat o nomComunitat';
+          message = 'Comunitat no vinculada. Falta idComunitat, nomComunitat o potenciaComunitat';
           httpResponse(req, res, 400, 'KO', message, insertApiTable);
         }
       } else {
