@@ -74,7 +74,9 @@ exports.update = (req, res) => {
                 backupDb();
                 deleteTable('usuari');
                 conn.serialize(function (err, rows) {
+                  //let stmt = conn.prepare('INSERT INTO usuari(idUsuari, idConnexio, dataAlta, 
                   let stmt = conn.prepare('INSERT INTO usuari(idUsuari, dataAlta, dataActualitzacio, nom, coeficient, estat, vinculat, comentaris) VALUES(?,?,?,?,?,?,?,?)');
+                  //(?,?,?,?,?,?,?,?,?)');
                   for (let i = 0; i < users.length; i++) {
                     var donatAlta = false;
                     if (rows2[0]) {
