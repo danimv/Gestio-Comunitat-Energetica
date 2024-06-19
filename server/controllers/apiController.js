@@ -6,15 +6,18 @@ var base64url = require('base64url');
 const exportedC = require('../controllers/userController');
 const exportedD = require('../db/dbDriver');
 const { exit } = require('process');
-const location = exportedD.dbLocation();
-const locationBackup = exportedD.dbLocationBackup();
-let conn = exportedD.dbConnection();
+// const location = exportedD.dbLocation();
+// const locationBackup = exportedD.dbLocationBackup();
+// let conn = exportedD.dbConnection();
 var LocalStorage = require('node-localstorage').LocalStorage;
 localStorage = new LocalStorage('./scratch');
 
 // Vinculació de comunitat amb servidor extern
 exports.init = (req, res) => {
   var { idComunitat, nomComunitat, potenciaComunitat, comentaris } = req.body;
+  const path = getLocation(idComunitat);
+  // console.log(path)
+  conn = exportedD.dbConnection(path);
   token = req.headers.authorization;
   data = exportedC.calcularData();
   message = "";
@@ -30,7 +33,8 @@ exports.init = (req, res) => {
         if (nomComunitat && idComunitat && potenciaComunitat) {          
           nomComunitat = nomComunitat.toUpperCase();
           conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, potenciaComunitat, comentaris, sync,mode) VALUES (?,?,?,?,?,?)', [idComunitat, nomComunitat, potenciaComunitat, comentaris, 1, 0], (err, rows) => {
-            if (!err) {              
+            if (!err) {    
+              // console.log("ok");        
               message = 'Comunitat vinculada';
               httpResponse(req, res, 200, 'OK', message, insertApiTable);
             } else {
@@ -61,6 +65,9 @@ exports.update = (req, res) => {
   message = "";
   tipus = "Actualització usuaris";
   var { users, idComunitat } = req.body;
+  const path = getLocation(idComunitat);
+  const pathBackup = getLocationBackup(idComunitat);
+  conn = exportedD.dbConnection(path);
   // console.log(req.headers);
   // console.log(req.headers.authorization);
   token = req.headers.authorization;
@@ -71,7 +78,7 @@ exports.update = (req, res) => {
           if (rows[0].mode == 0) {
             if (idComunitat && users[0] && users[0].idUsuari) {
               if (rows[0] && rows[0].idComunitat == idComunitat) {
-                backupDb();
+                backupDb(path, pathBackup);
                 deleteTable('usuari');
                 conn.serialize(function (err, rows) {
                   //let stmt = conn.prepare('INSERT INTO usuari(idUsuari, idConnexio, dataAlta, 
@@ -101,6 +108,7 @@ exports.update = (req, res) => {
                   stmt.finalize();
                   updateCoeficientsTable(data);
                   if (!err) {
+                    // console.log("ok usuaris");
                     message = 'Usuaris actualitzats';
                     httpResponse(req, res, 200, 'OK', message, insertApiTable);
                   } else {
@@ -141,9 +149,9 @@ exports.update = (req, res) => {
 //  }
 
 //Funcio backup db
-function backupDb() {
+function backupDb(path, pathBackup) {
   // File destination.txt will be created or overwritten by default.
-  fs.copyFile(location, locationBackup, (err) => {
+  fs.copyFile(path, pathBackup, (err) => {
     if (err) console.log(err);
     console.log('Backup feta de comunitat.db');
   });
@@ -237,4 +245,16 @@ function httpRequest(postData, clientHost, clientContext, requestType, callback)
     callback(response);
     return;
   });
+}
+
+function getLocation(idComunitat){
+  // let path = 'server/db/'+ idComunitat + '/comunitat.db';
+  let path = 'home/'+ idComunitat + '/comunitat.db';
+  return path;
+}
+
+function getLocationBackup(idComunitat){
+  // let path = 'server/db/'+ idComunitat + '/comunitat_backup.db';
+  let path = 'home/'+ idComunitat + '/comunitat_backup.db';
+  return path;
 }

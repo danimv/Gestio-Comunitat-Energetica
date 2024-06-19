@@ -2,7 +2,7 @@ let sqlite3 = require('sqlite3').verbose(); //'server/controllers/comunitat.db';
 const fs = require('fs');
 const { nextTick } = require('process');
 const exportedD = require('../db/dbDriver');
-const location = exportedD.dbLocation();
+// const location = exportedD.dbLocation();
 let conn = exportedD.dbConnection();
 
 // Vista comunitat

@@ -23,9 +23,9 @@ const handlebars = exphbs.create({ extname: '.hbs', defaultLayout: 'main_initial
 app.engine('.hbs', handlebars.engine);
 app.set('view engine', '.hbs');
 
-const rutesInici = require('./server/routes/inici');
-const rutesComunitat = require('./server/routes/comunitat');
-const rutesUsuari = require('./server/routes/usuaris');
+// const rutesInici = require('./server/routes/inici');
+// const rutesComunitat = require('./server/routes/comunitat');
+// const rutesUsuari = require('./server/routes/usuaris');
 const rutesApi = require('./server/routes/api');
 
 app.use(session({
@@ -53,18 +53,18 @@ function isAuthenticated(request, res, next) {
 }
 
 // Recursos i rutes
-app.use('/', rutesInici, function (req, res, next) {
-    req.app.locals.layout = 'main_initial';
-    next();
-});
-app.use('/comunitat', isAuthenticated, rutesComunitat, function (req, res, next) {
-    req.app.locals.layout = 'main';
-    next();
-});
-app.use('/usuaris', isAuthenticated, rutesUsuari, function (req, res, next) {
-    req.app.locals.layout = 'main';
-    next();
-});
+// app.use('/', rutesInici, function (req, res, next) {
+//     req.app.locals.layout = 'main_initial';
+//     next();
+// });
+// app.use('/comunitat', isAuthenticated, rutesComunitat, function (req, res, next) {
+//     req.app.locals.layout = 'main';
+//     next();
+// });
+// app.use('/usuaris', isAuthenticated, rutesUsuari, function (req, res, next) {
+//     req.app.locals.layout = 'main';
+//     next();
+// });
 app.use('/api', rutesApi, function (req, res, next) {
     req.app.locals.layout = 'main';
     next();
@@ -72,58 +72,58 @@ app.use('/api', rutesApi, function (req, res, next) {
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-app.post('/auth', function (request, response) {
-    // Capture the input fields
-    let username = request.body.username;
-    let password = request.body.password;
-    if (username && password) {
-        // //Connexió a Sqlite
-        // let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_READWRITE, (err) => {
-        //     if (err) {
-        //         console.error(err.message);
-        //     }
-        //     console.log('Connected to database.');
-        // });
-        // conn.all('SELECT * FROM credencial WHERE nomUsuari = ? AND contrasenya = ?', [username, password], function (error, results, fields) {
-        //     if (error) throw error;
-        //     if (results.length > 0)
+// app.post('/auth', function (request, response) {
+//     // Capture the input fields
+//     let username = request.body.username;
+//     let password = request.body.password;
+//     if (username && password) {
+//         // //Connexió a Sqlite
+//         // let conn = new sqlite3.Database('server/controllers/comunitat.db', sqlite3.OPEN_READWRITE, (err) => {
+//         //     if (err) {
+//         //         console.error(err.message);
+//         //     }
+//         //     console.log('Connected to database.');
+//         // });
+//         // conn.all('SELECT * FROM credencial WHERE nomUsuari = ? AND contrasenya = ?', [username, password], function (error, results, fields) {
+//         //     if (error) throw error;
+//         //     if (results.length > 0)
 
-        request.session.regenerate(function (err) {
-            if (err) next(err)
-            if (username == 'admin' && password == '8zN5Ir7lny5HBcbvjAou') {
-                request.session.user = username;
+//         request.session.regenerate(function (err) {
+//             if (err) next(err)
+//             if (username == 'admin' && password == '8zN5Ir7lny5HBcbvjAou') {
+//                 request.session.user = username;
 
-                // save the session before redirection
-                request.session.save(function (err) {
-                    if (err) return next(err)
-                    try {
-                        response.redirect('/comunitat');
-                    } catch (err) {
-                        next('route');
-                    }
-                })
-            } else {
-                var message = true;
-                // response.redirect(`/?message=${message}`);// + `${message}`);                
-                response.render('inici', { message });
-                // alert("USUARI O CONTRASENYA INCORRECTE");
-            }
-        })
-    } else {
-        response.send('Introdueix l`usuari i la contrasenya!');
-        response.end();
-    }
-});
+//                 // save the session before redirection
+//                 request.session.save(function (err) {
+//                     if (err) return next(err)
+//                     try {
+//                         response.redirect('/comunitat');
+//                     } catch (err) {
+//                         next('route');
+//                     }
+//                 })
+//             } else {
+//                 var message = true;
+//                 // response.redirect(`/?message=${message}`);// + `${message}`);                
+//                 response.render('inici', { message });
+//                 // alert("USUARI O CONTRASENYA INCORRECTE");
+//             }
+//         })
+//     } else {
+//         response.send('Introdueix l`usuari i la contrasenya!');
+//         response.end();
+//     }
+// });
 
-app.get('/', (req, res) => {
-    res.render('inici');
-});
+// app.get('/', (req, res) => {
+//     res.render('inici');
+// });
 
 //Logout
-app.get('/logout', function (req, res, next) {
-    req.app.locals.layout = 'main_initial';
-    next();
-}, function (req, res) {
-    req.session.destroy();
-    res.redirect('/');
-});
+// app.get('/logout', function (req, res, next) {
+//     req.app.locals.layout = 'main_initial';
+//     next();
+// }, function (req, res) {
+//     req.session.destroy();
+//     res.redirect('/');
+// });
