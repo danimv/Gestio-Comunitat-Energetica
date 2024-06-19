@@ -27,10 +27,10 @@ exports.init = (req, res) => {
   conn.all('SELECT * FROM comunitat ORDER BY id DESC LIMIT 1', (err, rows) => {
     if (!err) {
       if (rows.length == 0 || rows[0].mode == 0) {
-        if (nomComunitat && idComunitat && potenciaComunitat) {
+        if (nomComunitat && idComunitat && potenciaComunitat) {          
           nomComunitat = nomComunitat.toUpperCase();
-          conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, potenciaComunitat, comentaris, sync,mode) VALUES (?,?,?,?,?)', [idComunitat, nomComunitat, potenciaComunitat, comentaris, 1, 0], (err, rows) => {
-            if (!err) {
+          conn.all('INSERT INTO comunitat(idComunitat, nomComunitat, potenciaComunitat, comentaris, sync,mode) VALUES (?,?,?,?,?,?)', [idComunitat, nomComunitat, potenciaComunitat, comentaris, 1, 0], (err, rows) => {
+            if (!err) {              
               message = 'Comunitat vinculada';
               httpResponse(req, res, 200, 'OK', message, insertApiTable);
             } else {
